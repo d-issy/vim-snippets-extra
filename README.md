@@ -1,1 +1,1 @@
-# vim-mysnippets
+# vim-snippets-extra
