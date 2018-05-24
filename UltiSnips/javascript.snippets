@@ -1,0 +1,280 @@
+priority -5
+
+##############################
+# Symbol
+##############################
+snippet /\s*([!<>+\-*/^|=]={0,2})\s*([\w"']*)/ "" r
+`!p
+snip.rv = ' ' + match.group(1) + ' ' + match.group(2)
+`
+endsnippet
+
+snippet /\s*\?/ "" r
+ ? ${2} : ${0}
+endsnippet
+
+##############################
+# import
+##############################
+snippet im "import" b
+import ${1} from '${2:`!p
+snip.rv = t[1].lower()
+`}'
+${0}
+endsnippet
+
+snippet imas "import as" b
+import * as ${1} from '${2:`!p
+snip.rv = t[1].lower()
+`}'
+${0}
+endsnippet
+
+snippet imm "import " b
+import { ${1} } from '${2:$1}'
+${0}
+endsnippet
+
+##############################
+# variable
+##############################
+snippet let "let" b
+let ${1} = ${0}
+endsnippet
+
+snippet const "const" b
+const ${1} = ${0}
+endsnippet
+
+snippet t "this." b
+this.
+endsnippet
+
+##############################
+# statement
+##############################
+snippet if "if" b
+if (${1}) {
+	${0}
+}
+endsnippet
+
+snippet ife "if else" b
+if (${1}) {
+	${0}
+} else {
+}
+endsnippet
+
+snippet /\s*el(se)?/ "else" r
+ else {
+	${0:aaa}
+}
+endsnippet
+
+snippet /sw(itch)?/ "switch" r
+switch (${1}) {
+	${0}
+}
+endsnippet
+
+snippet case "case" b
+case ${1}:
+	${0}
+	break
+endsnippet
+
+snippet try "try" b
+try {
+	${0}
+} catch (${1:e}) {
+	${2}
+}
+endsnippet
+
+snippet tryf "try finally" b
+try {
+	${0}
+} catch (${1:e}) {
+	${2}
+} finally {
+	${3}
+}
+endsnippet
+
+snippet /err/ "throw Error" r
+throw new Error('${0}')
+endsnippet
+
+snippet ret "return" b
+return ${0}
+endsnippet
+
+##############################
+# function
+##############################
+snippet f "function" w
+function(${1}) {
+	${0}
+}
+endsnippet
+
+snippet fun "function" b
+function ${1}(${2}) {
+	${0}
+}
+endsnippet
+
+snippet af "function" w
+(${1}) => {
+	${0}
+}
+endsnippet
+
+snippet caf "function" b
+const ${1} = (${2}) => {
+	${0}
+}
+endsnippet
+
+snippet /\s*=>/ "function" r
+ => {
+	${0}
+}
+endsnippet
+
+snippet /bind?/ "bind this" r
+this.`!p
+snip.rv = t[1]` = this.${1}.bind(this)${0}
+endsnippet
+
+##############################
+# class
+##############################
+snippet cla "class" b
+class ${1} {
+	${0}
+}
+endsnippet
+
+snippet cle "class" b
+class ${1} extends ${2} {
+	${0}
+}
+endsnippet
+
+snippet clc "class" b
+class ${1} {
+	constructor(${2}) {
+		${0}
+	}
+}
+endsnippet
+
+snippet clee "class" b
+class ${1} extends ${2} {
+	constructor(${3}) {
+		`!p
+snip.rv = 'super(' + t[3] + ')\n\t\t' if t[3] else ''
+`${0}
+	}
+}
+endsnippet
+
+##############################
+# export
+##############################
+snippet ed "export default" b
+export default ${0}
+endsnippet
+
+##############################
+# react
+##############################
+## import
+snippet ir "import react" b
+import React from 'react'
+${0}
+endsnippet
+
+snippet irc "import react component" b
+import React, {Component} from 'react'
+${0}
+endsnippet
+
+snippet ird "import react dom" b
+import ReactDOM from 'react-dom'
+${0}
+endsnippet
+
+## component
+snippet rcc "react component" b
+class ${1} extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		return(
+			${0:<div />}
+		)
+	}
+}
+endsnippet
+
+snippet cdm "react componentDidMount" b
+componentDidMount() {
+	${0}
+}
+endsnippet
+
+snippet cwm "react componentWillMount" b
+componentWillMount() {
+	${0}
+}
+endsnippet
+
+snippet cwun "react componentWillUnmount" b
+componentWillUnmount() {
+	${0}
+}
+endsnippet
+
+snippet cdup "react componentDidUpdate" b
+componentDidUpdate(prevProps, prevState) {
+	${0}
+}
+endsnippet
+
+snippet cwr "react componentWillReceiveProps" b
+componentWillReceiveProps(nextProps) {
+	${0}
+}
+endsnippet
+
+snippet cwu "react componentWillUpdate" b
+componentWillUpdate(nextProps, nextState)) {
+	${0}
+}
+endsnippet
+
+snippet state "react state" w
+this.state = {
+	${0}
+}
+endsnippet
+
+snippet sets "react setState" b
+this.setState({
+	${0}
+})
+endsnippet
+
+snippet ts "this state" b
+this.state.${0}
+endsnippet
+
+snippet tp "this state" b
+this.props.${0}
+endsnippet
+
