@@ -184,11 +184,19 @@ function ${1}(${2}) {
 }
 endsnippet
 
+priority -1
+snippet /\s*=>/ "function" r
+ => {
+	${0}
+}
+endsnippet
+
 snippet af "function" w
 (${1}) => {
 	${0}
 }
 endsnippet
+priority -5
 
 snippet caf "function" b
 const ${1} = (${2}) => {
@@ -196,11 +204,6 @@ const ${1} = (${2}) => {
 }
 endsnippet
 
-snippet /\s*=>/ "function" r
- => {
-	${0}
-}
-endsnippet
 
 snippet /bind?/ "bind this" r
 this.`!p
