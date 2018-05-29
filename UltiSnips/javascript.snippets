@@ -69,6 +69,7 @@ snip.rv = match.group(1) + match.group(2) + ' ' + match.group(3) + ' '
 endsnippet
 
 
+priority 0
 ##############################
 # import
 ##############################
@@ -184,7 +185,6 @@ function ${1}(${2}) {
 }
 endsnippet
 
-priority -1
 snippet /\s*=>/ "function" r
  => {
 	${0}
@@ -192,11 +192,16 @@ snippet /\s*=>/ "function" r
 endsnippet
 
 snippet af "function" w
-(${1}) => {
+`!p
+if ',' in t[1]:
+	snip.rv = '('
+`${1}`!p
+if ',' in t[1]:
+	snip.rv = ')'
+` => {
 	${0}
 }
 endsnippet
-priority -5
 
 snippet caf "function" b
 const ${1} = (${2}) => {
@@ -260,6 +265,30 @@ endsnippet
 snippet js "" b
 JSON.stringify(${0})
 endsnippet
+
+##############################
+# fetch
+##############################
+snippet fe "" b
+fetch('${1}')${0}
+endsnippet
+
+snippet thenr "" w
+then(${1:res} => ${2:res.json()})${0}
+endsnippet
+
+snippet then "" w
+then(${1:res} => {
+	${0}
+})
+endsnippet
+
+snippet catch "" w
+catch(${1:err} => {
+	console.error(err)
+})
+endsnippet
+
 
 ##############################
 # browser
