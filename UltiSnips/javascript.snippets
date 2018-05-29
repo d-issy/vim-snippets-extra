@@ -1,12 +1,11 @@
 ##############################
-# Global
-##############################
-global p!
-endglobal
-
-##############################
 # Symbol
 ##############################
+priority -3
+snippet /\s*\?/ "" r
+ ? ${2} : ${0}
+endsnippet
+
 priority -4
 snippet /^(.*(if|for|while|switch)\s*\(|.*return\s*|.*[:?]\s*|[^=]*?=\s*)([^\r\n;]+)/ "arithmetic" r
 `!p
@@ -14,9 +13,20 @@ import re
 def format_arithmetic(s):
 	p = 0
 	while p < len(s):
-		m = re.search('^("([^"]|\\")*"|\'([^\']|\\\')*\')', s[p:])
+		m = re.search('^(\s*("([^"]|\\")*")\s*)', s[p:])
 		if m:
-			p += len(m.group(0))
+			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
+			p += len(m.group(2))
+			continue
+		m = re.search("^(\s*('([^']|\\')*')\s*)", s[p:])
+		if m:
+			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
+			p += len(m.group(2))
+			continue
+		m = re.search('^(\s*(\`([^\`]|\\\`)*\`)\s*)', s[p:])
+		if m:
+			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
+			p += len(m.group(2))
 			continue
 		m = re.search('^\s*\(\s*(.*)\s*\)\s*', s[p:])
 		if m:
@@ -38,11 +48,9 @@ def format_arithmetic(s):
 			s[:p], m.group(1), s[p+len(m.group(0)):])
 			p += 1
 			continue
-		m = re.search('^(s*(\*\*|[*/%]|[+\-]|<<|>{2,3}|[<>]=?)\s*|[!=]={1,2}|&&|\|\|)', s[p:])
+		m = re.search('^(\s*(\*\*|[*/%]|[+\-]|<<|>{2,3}|[<>]=?|[!=]={1,2}|&&|\|\|)\s*)', s[p:])
 		if m:
-			print(m)
-			print(m.group(1))
-			s = '{} {} {}'.format(s[:p], m.group(1), s[p+len(m.group(0)):])
+			s = '{} {} {}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
 			p += len(m.group(1))+2
 			continue
 		p += 1
@@ -60,11 +68,6 @@ snip.rv = match.group(1) + match.group(2) + ' ' + match.group(3) + ' '
 `
 endsnippet
 
-
-
-snippet /\s*\?/ "" r
- ? ${2} : ${0}
-endsnippet
 
 ##############################
 # import
