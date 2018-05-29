@@ -55,7 +55,7 @@ endsnippet
 ##############################
 snippet if "if" b
 if (${1}) {
-	${0}
+	${0:${VISUAL}}
 }
 endsnippet
 
@@ -66,9 +66,12 @@ if (${1}) {
 }
 endsnippet
 
-snippet /\s*el(se)?/ "else" r
- else {
-	${0:aaa}
+snippet /\}?\s*el(se)?/ "else" r
+`!p
+if match.group(0).startswith('}'):
+	snip.rv = '} '
+`else {
+	${0}
 }
 endsnippet
 
@@ -189,6 +192,71 @@ export default ${0}
 endsnippet
 
 ##############################
+# json
+##############################
+snippet jp "" b
+JSON.parse(${0})
+endsnippet
+
+snippet js "" b
+JSON.stringify(${0})
+endsnippet
+
+##############################
+# browser
+##############################
+snippet d "" b
+document.
+endsnippet
+
+snippet di "" w
+document.getElementById('${0}')
+endsnippe}t
+
+snippet dc "" w
+document.getElementsByClassName('${0}')
+endsnippet
+
+snippet qs "" w
+document.querySelector('${0}')
+endsnippet
+
+snippet qsa "" w
+document.querySelectorAll('${0}')
+endsnippet
+
+##############################
+# debug
+##############################
+snippet de "" b
+debugger
+endsnippet
+
+snippet cl "" b
+console.log(${0:${VISUAL}})
+endsnippet
+
+snippet cd "" b
+console.debug(${0:${VISUAL}})
+endsnippet
+
+snippet ce "" b
+console.error(${0:${VISUAL}})
+endsnippet
+
+snippet cw "" b
+console.warn(${0:${VISUAL}})
+endsnippet
+
+snippet ci "" b
+console.info(${0:${VISUAL}})
+endsnippet
+
+snippet ct "" b
+console.table(${0:${VISUAL}})
+endsnippet
+
+##############################
 # react
 ##############################
 ## import
@@ -234,7 +302,7 @@ componentWillMount() {
 }
 endsnippet
 
-snippet cwun "react componentWillUnmount" b
+snippet cwum "react componentWillUnmount" b
 componentWillUnmount() {
 	${0}
 }
@@ -277,4 +345,3 @@ endsnippet
 snippet tp "this state" b
 this.props.${0}
 endsnippet
-
