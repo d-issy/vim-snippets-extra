@@ -329,6 +329,29 @@ endsnippet
 
 
 ##############################
+# window
+##############################
+snippet sett "" w
+setTimeout(${2:(${3}) => {
+	${0}
+}}${1/(.+)/(?1:, )/}${1:1000}${3/(.+)/(?1:, $1)/})
+endsnippet
+
+snippet seti "" w
+setInterval(${2:(${3}) => {
+	${0}
+}}${1/(.+)/(?1:, )/}${1:1000}${3/(.+)/(?1:, $1)/})
+endsnippet
+
+snippet clt "" w
+clearTimeout(${1})${0}
+endsnippet
+
+snippet cli "" w
+clearTimeout(${1})${0}
+endsnippet
+
+##############################
 # dom
 ##############################
 snippet d "" w
