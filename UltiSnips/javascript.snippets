@@ -7,7 +7,7 @@ snippet /\s*\?/ "" r
 endsnippet
 
 priority -4
-snippet /^(.*(if|for|while|switch)\s*\(|.*return\s*|.*[:?]\s*|[^=]*?=\s*)([^\r\n;]+)/ "arithmetic" r
+snippet /^(.*(if|for|while|switch)\s*\(|.*return\s*|.*=>\s*|.*[:?]\s*|[^=]*?=\s*)([^\r\n;]+)/ "arithmetic" r
 `!p
 import re
 def format_arithmetic(s):
@@ -63,32 +63,30 @@ endsnippet
 
 priority -5
 snippet /(^[ \t]*|\()([$_a-zA-Z][$_\w]*)\s*(=|\*{1,2}=|[<>]{2,3}=|[+\-/%&^|]=)\s*/ "assign" r
-`!p
-snip.rv = match.group(1) + match.group(2) + ' ' + match.group(3) + ' '
-`
+`!p snip.rv = match.group(1) + match.group(2) + ' ' + match.group(3) + ' '`
 endsnippet
-
 
 priority 0
 ##############################
-# import
+# import / require
 ##############################
 snippet im "import" b
-import ${1} from '${2:`!p
-snip.rv = t[1].lower()
-`}'
+import ${1} from '${2:${1/\w/\l$0/}}'
 ${0}
 endsnippet
 
 snippet imas "import as" b
-import * as ${1} from '${2:`!p
-snip.rv = t[1].lower()
-`}'
+import * as ${1} from '${2:${1/\w/\l$0/}}'
 ${0}
 endsnippet
 
 snippet imm "import " b
-import { ${1} } from '${2:$1}'
+import { ${1} } from '${2}'
+${0}
+endsnippet
+
+snippet req "" b
+const ${2:$1} = require('${1}')
 ${0}
 endsnippet
 
@@ -99,7 +97,7 @@ snippet let "let" b
 let ${1} = ${0}
 endsnippet
 
-snippet const "const" b
+snippet /con(st)?/ "const" r
 const ${1} = ${0}
 endsnippet
 
@@ -230,29 +228,69 @@ class ${1} extends ${2} {
 }
 endsnippet
 
-snippet clc "class" b
-class ${1} {
-	constructor(${2}) {
-		${0}
+snippet clee "class" b
+class ${1} extends ${2} {
+		constructor(${3}) {
+			${3/(.+)/(?1:super\($1\))/}${0}
+		}
 	}
 }
 endsnippet
 
-snippet clee "class" b
-class ${1} extends ${2} {
-	constructor(${3}) {
-		`!p
-snip.rv = 'super(' + t[3] + ')\n\t\t' if t[3] else ''
-`${0}
-	}
+snippet conr "" b
+constructor(${1}) {
+	${1/(.+)/(?1:super\($1\))/}${0}
 }
 endsnippet
 
 ##############################
 # export
 ##############################
+snippet e "export default" b
+export ${0}
+endsnippet
+
 snippet ed "export default" b
-export default ${0}
+export default ${0:`!p snip.rv = snip.basename`}
+endsnippet
+
+##############################
+# object
+##############################
+snippet /:/ "" r
+: ${0}
+endsnippet
+
+snippet /{/ "" r
+{
+	${0}
+}
+endsnippet
+
+##############################
+# array
+##############################
+snippet map "" w
+map(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => {
+	${0}
+}${2/(.+)/(?1:, )/}${2})
+endsnippet
+
+snippet fore "" w
+forEach(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => {
+	${0}
+}${2/(.+)/(?1:, )/}${2})
+endsnippet
+
+snippet fil "" w
+filter(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => ${0})
+endsnippet
+
+##############################
+# string
+##############################
+snippet ts "" w
+toString()${0}
 endsnippet
 
 ##############################
@@ -291,26 +329,91 @@ endsnippet
 
 
 ##############################
-# browser
+# dom
 ##############################
-snippet d "" b
+snippet d "" w
 document.
 endsnippet
 
 snippet di "" w
-document.getElementById('${0}')
-endsnippe}t
+document.getElementById('${1}')${0}
+endsnippet
+
+snippet ge "" w
+getElementById('${1}')${0}
+endsnippet
 
 snippet dc "" w
-document.getElementsByClassName('${0}')
+document.getElementsByClassName('${1}')${0}
+endsnippet
+
+snippet gc "" w
+getElementsByClassName('${1}')${0}
+endsnippet
+
+snippet dn "" w
+document.getElementsByName('${1}')${0}
+endsnippet
+
+snippet dt "" w
+document.getElementsByTagName('${1}')${0}
 endsnippet
 
 snippet qs "" w
-document.querySelector('${0}')
+querySelector('${1}')${0}
 endsnippet
 
 snippet qsa "" w
-document.querySelectorAll('${0}')
+querySelectorAll('${1}')${0}
+endsnippet
+
+snippet adde "" w
+addEventListener('${1:click}', ${2:(${3:e}) => {
+	${0}
+}})
+endsnippet
+
+snippet rme "" w
+removeEventListener('${1:click}', ${2:handler})${0}
+endsnippet
+
+snippet cr "" w
+createElement('${1}')${0}
+endsnippet
+
+snippet crt "" w
+createTextNode('${1}')${0}
+endsnippet
+
+snippet cra "" w
+createAttribute('${1}')${0}
+endsnippet
+
+snippet app "" w
+appendChild(${1})${0}
+endsnippet
+
+snippet rmc "" w
+removeChild(${1})${0}
+endsnippet
+
+snippet seta "" w
+setAttribute('${1}', '${2}')${0}
+endsnippet
+
+snippet setan "" w
+setAttributeNode('${1}')${0}
+endsnippet
+
+snippet inb "" w
+insertBefore(${1:new}, ${2:exist})${0}
+endsnippet
+
+##############################
+# event
+##############################
+snippet pd "" w
+preventDefalt()${0}
 endsnippet
 
 ##############################
@@ -321,27 +424,27 @@ debugger
 endsnippet
 
 snippet cl "" b
-console.log(${0:${VISUAL}})
+console.log(${1:${VISUAL}})${0}
 endsnippet
 
 snippet cd "" b
-console.debug(${0:${VISUAL}})
+console.debug(${1:${VISUAL}})${0}
 endsnippet
 
 snippet ce "" b
-console.error(${0:${VISUAL}})
+console.error(${1:${VISUAL}})${0}
 endsnippet
 
 snippet cw "" b
-console.warn(${0:${VISUAL}})
+console.warn(${1:${VISUAL}})${0}
 endsnippet
 
 snippet ci "" b
-console.info(${0:${VISUAL}})
+console.info(${1:${VISUAL}})${0}
 endsnippet
 
 snippet ct "" b
-console.table(${0:${VISUAL}})
+console.table(${1:${VISUAL}})${0}
 endsnippet
 
 ##############################
