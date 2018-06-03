@@ -101,7 +101,7 @@ snippet /con(st)?/ "const" r
 const ${1} = ${0}
 endsnippet
 
-snippet t "this." b
+snippet t "this." w
 this.
 endsnippet
 
@@ -307,7 +307,7 @@ endsnippet
 ##############################
 # fetch
 ##############################
-snippet fe "" b
+snippet fe "" w
 fetch('${1}')${0}
 endsnippet
 
@@ -323,7 +323,7 @@ endsnippet
 
 snippet catch "" w
 catch(${1:err} => {
-	console.error(err)
+	console.error($1)
 })
 endsnippet
 
