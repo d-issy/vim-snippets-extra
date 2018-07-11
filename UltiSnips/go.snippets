@@ -1,127 +1,264 @@
 priority -5
 
 # package
-snippet /^pa(ckage)?/ "Package declaration" r
+snippet /^pa(ckage)?/ "" r
 package ${1:main}
-endsnippet
 
-# import
-snippet /^im(port)?/ "Import declaration" r
-import (
-	"${1:fmt}"
-)
 ${0}
 endsnippet
 
-# types and variable
-snippet : "Variable declaration" b
-${1:name} := ${2:value}
+
+# import
+snippet /^im(port)?$/ "" r
+import (
+	${1}
+)
+
+${0}
 endsnippet
 
-snippet var "Variable declaration" b
-var ${1:name} ${2:type}
+
+# variable/constant
+snippet var "" b
+var ${1} ${0}
 endsnippet
 
-snippet vars "Variables declaration" b
+snippet /\bco(n(st)?)?/ "const" r
+const ${1} = ${0}
+endsnippet
+
+snippet varb "" b
 var (
 	${0}
 )
 endsnippet
 
-snippet map "Map type" b
-map[${1:key}]${2:value}
+snippet conb "" b
+const (
+	${0}
+)
 endsnippet
 
-snippet /st(ruct)?/ "Struct declaration" r
-type ${1} struct {
-	${0:${VISUAL}}
-}
+
+# type
+snippet /\bty(pe)?/ "" r
+type ${1} ${0}
 endsnippet
 
-# tag
-snippet json "JSON tag"
-${1:${VISUAL}} ${2:type} \`json:"`!p
-import re
-snip.rv = re.sub(r'([A-Z]+)', r'_\1', t[1]).lower().lstrip('_')
-`"\`
+
+# abbriveate
+snippet /\s*:\s*/ "" r
+ := ${0}
 endsnippet
 
-snippet sql "SQL tag"
-${1:${VISUAL}} ${2:type} \`sql:"`!p
-import re
-snip.rv = re.sub(r'([A-Z]+)', r'_\1', t[1]).lower().lstrip('_')
-`"\`
+snippet /\[/ "" r
+[${1}]${0}
 endsnippet
 
-snippet tag "add tag"
-\`${1:tagName}:"${2}"\`
+snippet /\"/ "" r
+"${1}"${0}
 endsnippet
 
-# if statement
-snippet if "If statement" b
-if ${1:condition}${1/(.+)/ /}{
-	${0:${VISUAL}}
-}
+snippet str "" w
+string${0}
 endsnippet
 
-snippet ife "If-else statement" b
-if ${1:condition}${1/(.+)/ /}{
-	${2:${VISUAL}}
-} else {
+snippet ret "" w
+return ${0}
+endsnippet
+
+
+# condition statement
+snippet if "" b
+if ${1} {
 	${0}
 }
 endsnippet
 
-snippet else "Else statement" b
-else {
+snippet ife "" b
+if ${1} {
+	${0}
+} else {
+}
+endsnippet
+
+snippet /(}\s*)?el(se)?/ "" r
+`!p
+if match.group(0).startswith('}'):
+	snip.rv = '} '
+`else {
+	${1}
+}
+endsnippet
+
+snippet /(}\s*)?elif/ "" r
+`!p
+if match.group(0).startswith('}'):
+	snip.rv = '} '
+`else if ${1} {
+	${0}
+}
+endsnippet
+
+snippet err "" w
+if err != nil {
+	${0}
+}
+endsnippet
+
+snippet errn "" w
+errors.New("${1}")${0}
+endsnippet
+
+snippet /(\w+)\.ok/ "" r
+${2}, ok := `!p
+snip.rv = match.group(1)
+`.(${1})
+if !ok {
+	${0}
+}
+endsnippet
+
+
+# loop statement
+snippet for "" b
+for ${1}${1/.+/ /}{
+	${0}
+}
+endsnippet
+
+snippet range "" b
+for ${1:_}${2/.+/, /}${2} := range ${3:`!p
+v = t[2]
+if v == '':
+	v = ''
+elif re.compile(r'[^aiueo]y$').search(v):
+	v = v[:-1] + 'ies'
+elif re.compile(r'(s|z|sh|ch|x)\Z').search(v):
+	v = v + 'es'
+else:
+	v = v + 's'
+snip.rv = v
+`} {
+	${0}
+}
+endsnippet
+
+
+# switch / select
+snippet /\bsw(itch)?/ "" r
+switch ${1} {
+	$0
+}
+endsnippet
+
+snippet /\bsele(ct)?/ "" r
+select ${1} {
+	$0
+}
+endsnippet
+
+
+# struct
+snippet /\bst(ruct)?/ "" r
+struct {
+	${0}
+}
+endsnippet
+
+
+# interface
+snippet /\bin(terface)?/ "" r
+interface{}${0}
+endsnippet
+
+# map
+snippet /map/ "" r
+map[${1}]${0}
+endsnippet
+
+
+# function
+snippet func "" b
+func ${1}(${2}) ${3/([^,])*(,)?.*/(?2:\()/}${3}${3/([^,])*(,)?.*/(?2:\))/}${3/.+/ /}{
 	${0:${VISUAL}}
 }
 endsnippet
 
-# for
-snippet for "For statement" b
-for ${1:condtion}${1/(.+)/ /}{
-	${0:${VISUAL}}
-}
-endsnippet
-
-# switch
-snippet switch "Switch statement" b
-switch ${1:expression}${1/(.+)/ /}{
-case $0
-}
-endsnippet
-
-# functions
-snippet main "Main function" b
+snippet main "" b
 func main() {
 	${0:${VISUAL}}
 }
 endsnippet
 
-snippet func "Function" b
-func ${1:name}(${2:params})${3/(.+)/ /}${3:type} {
+snippet len "" w
+len(${1})${0}
+endsnippet
+
+snippet new "" w
+new(${1})${0}
+endsnippet
+
+snippet make "" w
+make(${1})${0}
+endsnippet
+
+snippet delete "" w
+delete(${1})${0}
+endsnippet
+
+snippet close "" w
+close(${1})${0}
+endsnippet
+
+snippet panic "" w
+panic(${1})${0}
+endsnippet
+
+snippet ap "" w
+$1 = append(${1:${VISUAL}}, ${2})${0}
+endsnippet
+
+
+# method
+snippet m "method" b
+func (${2:${1/([\W\d_]|(?<!\b)[a-z])?([A-Z])?/(?1:)(?2:\l$2)/g}} ${1}) ${3}(${4}) ${5/([^,])*(,)?.*/(?2:\()/}${5}${5/([^,])*(,)?.*/(?2:\))/}${5/.+/ /}{
 	${0:${VISUAL}}
 }
 endsnippet
 
-snippet /^me(thod)?/ "Method" r
-func (${1:receiver} ${2:type}) ${3:name}(${4:params})${5/(.+)/ /}${5:type} {
-	${0:${VISUAL}}
-}
+# test
+snippet te "" b
+t.Error(${1})${0}
 endsnippet
 
-snippet funch "HTTP handler" b
-func ${1:handler}(w http.ResponseWriter, r *http.Request) {
-	${0:${VISUAL}}
-}
+snippet tef "" b
+t.Errorf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\))/}
 endsnippet
 
-# error handling
-snippet err "Basic error handling" b
-if err != nil {
-	${0}
-}
+snippet tf "" b
+t.Fatal(${1})${0}
+endsnippet
+
+snippet tff "" b
+t.Fatalf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\))/}
+endsnippet
+
+# fmt
+snippet print "" b
+fmt.Print(${1})${0}
+endsnippet
+
+snippet println "" b
+fmt.Println(${1})${0}
+endsnippet
+
+snippet printf "" b
+fmt.Printf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\))/}
+endsnippet
+
+snippet sprintf "" b
+fmt.Sprintf("${2}"${2/([^%]|%%)*(%.)?.*/(?2:, :\))/}$3${2/([^%]|%%)*(%.)?.*/(?2:\))/}
 endsnippet
 
 # vim: ft=snippets:
