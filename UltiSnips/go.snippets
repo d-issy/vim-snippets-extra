@@ -19,11 +19,11 @@ endsnippet
 
 
 # variable/constant
-snippet var "" b
+snippet v "" b
 var ${1} ${0}
 endsnippet
 
-snippet /\bco(n(st)?)?/ "const" r
+snippet c  "" w
 const ${1} = ${0}
 endsnippet
 
@@ -41,13 +41,17 @@ endsnippet
 
 
 # type
-snippet /\bty(pe)?/ "" r
+snippet /\bt(ype)?/ "" r
 type ${1} ${0}
+endsnippet
+
+snippet /\bch(an)?/ "" r
+chan ${0}
 endsnippet
 
 
 # abbriveate
-snippet /\s*:\s*/ "" r
+snippet /\b\s*:\s*/ "" r
  := ${0}
 endsnippet
 
@@ -59,14 +63,71 @@ snippet /\"/ "" r
 "${1}"${0}
 endsnippet
 
-snippet str "" w
+snippet s "" w
 string${0}
 endsnippet
 
-snippet ret "" w
+snippet r "" w
 return ${0}
 endsnippet
 
+snippet df "" b
+defer ${0}
+endsnippet
+
+snippet go "" w
+go func() {
+	${0}
+}()
+endsnippet
+
+snippet tr "" w
+true
+endsnippet
+
+snippet f "" w
+false
+endsnippet
+
+snippet b "" w
+bool
+endsnippet
+
+snippet i "" w
+int
+endsnippet
+
+snippet int "" w
+int64
+endsnippet
+
+snippet ui "" w
+uint
+endsnippet
+
+snippet uint "" w
+uint64
+endsnippet
+
+snippet fl "" w
+float32
+endsnippet
+
+snippet float32 "" w
+float64
+endsnippet
+
+snippet e "" w
+error
+endsnippet
+
+snippet br "" b
+break
+endsnippet
+
+snippet cn "" b
+continue
+endsnippet
 
 # condition statement
 snippet if "" b
@@ -127,7 +188,7 @@ for ${1}${1/.+/ /}{
 }
 endsnippet
 
-snippet range "" b
+snippet ran "" b
 for ${1:_}${2/.+/, /}${2} := range ${3:`!p
 v = t[2]
 if v == '':
@@ -145,6 +206,7 @@ snip.rv = v
 endsnippet
 
 
+
 # switch / select
 snippet /\bsw(itch)?/ "" r
 switch ${1} {
@@ -153,7 +215,7 @@ switch ${1} {
 endsnippet
 
 snippet /\bsele(ct)?/ "" r
-select ${1} {
+select {
 	$0
 }
 endsnippet
@@ -179,7 +241,7 @@ endsnippet
 
 
 # function
-snippet func "" b
+snippet fn "" w
 func ${1}(${2}) ${3/([^,])*(,)?.*/(?2:\()/}${3}${3/([^,])*(,)?.*/(?2:\))/}${3/.+/ /}{
 	${0:${VISUAL}}
 }
@@ -191,7 +253,7 @@ func main() {
 }
 endsnippet
 
-snippet len "" w
+snippet /\bl(en)?/ "" r
 len(${1})${0}
 endsnippet
 
@@ -199,8 +261,16 @@ snippet new "" w
 new(${1})${0}
 endsnippet
 
-snippet make "" w
-make(${1})${0}
+snippet /\bmake(\d*)/ "" r
+make(`!p
+m = match.group(1)
+if len(m) > 0:
+	snip.rv = '[]'
+`${1}`!p
+m = match.group(1)
+if len(m) > 0:
+	snip.rv = ', ' + m
+`)${0}
 endsnippet
 
 snippet delete "" w
@@ -215,8 +285,8 @@ snippet panic "" w
 panic(${1})${0}
 endsnippet
 
-snippet ap "" w
-$1 = append(${1:${VISUAL}}, ${2})${0}
+snippet /\b(\w+)\s*[.=]ap?/ "" r
+`!p snip.rv = match.group(1)` = append(`!p snip.rv = match.group(1)`, ${1})${0}
 endsnippet
 
 
@@ -245,19 +315,19 @@ t.Fatalf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\))
 endsnippet
 
 # fmt
-snippet print "" b
+snippet fp "" b
 fmt.Print(${1})${0}
 endsnippet
 
-snippet println "" b
-fmt.Println(${1})${0}
-endsnippet
-
-snippet printf "" b
+snippet ff "" b
 fmt.Printf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\))/}
 endsnippet
 
-snippet sprintf "" b
+snippet ln "" b
+fmt.Println(${1}${1/(")?.*/(?1:")/})${0}
+endsnippet
+
+snippet sp "" w
 fmt.Sprintf("${2}"${2/([^%]|%%)*(%.)?.*/(?2:, :\))/}$3${2/([^%]|%%)*(%.)?.*/(?2:\))/}
 endsnippet
 
