@@ -121,11 +121,20 @@ if (${1}) {
 }
 endsnippet
 
-snippet /\}?\s*el(se)?/ "else" r
+snippet /(\}\s*)?el(se)?/ "else" r
 `!p
 if match.group(0).startswith('}'):
 	snip.rv = '} '
 `else {
+	${0}
+}
+endsnippet
+
+snippet /(}\s*)?elif/ "" r
+`!p
+if match.group(0).startswith('}'):
+	snip.rv = '} '
+`else if ${1} {
 	${0}
 }
 endsnippet
@@ -190,13 +199,7 @@ snippet /\s*=>/ "function" r
 endsnippet
 
 snippet af "function" w
-`!p
-if ',' in t[1]:
-	snip.rv = '('
-`${1}`!p
-if ',' in t[1]:
-	snip.rv = ')'
-` => {
+${1/([^,]+)?(,)?.*/(?1::\()(?2:\(:)/}${1}${1/([^,(])*(,)?.*/(?1::\))(?2:\))/} => {
 	${0}
 }
 endsnippet
@@ -209,8 +212,7 @@ endsnippet
 
 
 snippet /bind?/ "bind this" r
-this.`!p
-snip.rv = t[1]` = this.${1}.bind(this)${0}
+this.${1} = this.$1.bind(this)${0}
 endsnippet
 
 ##############################
@@ -271,19 +273,19 @@ endsnippet
 # array
 ##############################
 snippet map "" w
-map(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => {
+map${1/([^,])*(,)?.*/(?2:\()/}(${1}${1/([^,])*(,)?.*/(?2:\))/} => {
 	${0}
-}${2/(.+)/(?1:, )/}${2})
+})
 endsnippet
 
 snippet fore "" w
-forEach(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => {
+forEach${1/([^,])*(,)?.*/(?2:\()/}(${1}${1/([^,])*(,)?.*/(?2:\))/} => {
 	${0}
-}${2/(.+)/(?1:, )/}${2})
+})
 endsnippet
 
 snippet fil "" w
-filter(${1/([^,])*(,)?.*/(?2:\()/}${1:v}${1/([^,])*(,)?.*/(?2:\))/} => ${0})
+filter${1/([^,])*(,)?.*/(?2:\()/}(${1}${1/([^,])*(,)?.*/(?2:\))/} => ${0})
 endsnippet
 
 ##############################
