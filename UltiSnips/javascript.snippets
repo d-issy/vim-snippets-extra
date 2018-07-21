@@ -6,66 +6,6 @@ snippet /\s*\?/ "" r
  ? ${2} : ${0}
 endsnippet
 
-priority -4
-snippet /^(.*(if|for|while|switch)\s*\(|.*return\s*|.*=>\s*|.*[:?]\s*|[^=]*?=\s*)([^\r\n;]+)/ "arithmetic" r
-`!p
-import re
-def format_arithmetic(s):
-	p = 0
-	while p < len(s):
-		m = re.search('^(\s*("([^"]|\\")*")\s*)', s[p:])
-		if m:
-			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
-			p += len(m.group(2))
-			continue
-		m = re.search("^(\s*('([^']|\\')*')\s*)", s[p:])
-		if m:
-			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
-			p += len(m.group(2))
-			continue
-		m = re.search('^(\s*(\`([^\`]|\\\`)*\`)\s*)', s[p:])
-		if m:
-			s = '{}{}{}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
-			p += len(m.group(2))
-			continue
-		m = re.search('^\s*\(\s*(.*)\s*\)\s*', s[p:])
-		if m:
-			s = '{}({}){}'.format(s[:p], m.group(1), s[p+len(m.group(0)):])
-			p += 1
-			continue
-		m = re.search('^((\+\+|--)[$_\w]+|[$_\w)]+(\+\+|--))', s[p:])
-		if m:
-			p += len(m.group(0))
-			continue
-		m = re.search('^\s*!\s*', s[p:])
-		if m:
-			s = '{}!{}'.format(s[:p], s[p+len(m.group(0)):])
-			p += 1
-			continue
-		m = re.search('^\s*typeof\s*([$_\w]+)\s*', s[p:])
-		if m:
-			s = '{}typeof {}{}'.format(
-			s[:p], m.group(1), s[p+len(m.group(0)):])
-			p += 1
-			continue
-		m = re.search('^(\s*(\*\*|[*/%]|[+\-]|<<|>{2,3}|[<>]=?|[!=]={1,2}|&&|\|\|)\s*)', s[p:])
-		if m:
-			s = '{} {} {}'.format(s[:p], m.group(2), s[p+len(m.group(0)):])
-			p += len(m.group(1))+2
-			continue
-		p += 1
-	return s
-s = format_arithmetic(match.group(3))
-ret = match.group(1) + s
-snip.rv = ret
-`
-endsnippet
-
-priority -5
-snippet /(^[ \t]*|\()([$_a-zA-Z][$_\w]*)\s*(=|\*{1,2}=|[<>]{2,3}=|[+\-/%&^|]=)\s*/ "assign" r
-`!p snip.rv = match.group(1) + match.group(2) + ' ' + match.group(3) + ' '`
-endsnippet
-
 priority 0
 ##############################
 # import / require
@@ -85,19 +25,18 @@ import { ${1} } from '${2}'
 ${0}
 endsnippet
 
-snippet req "" b
-const ${2:$1} = require('${1}')
-${0}
+snippet req "" w
+require('${1}')${0}
 endsnippet
 
 ##############################
 # variable
 ##############################
-snippet let "let" b
+snippet /\bl(et)?/ "let" r
 let ${1} = ${0}
 endsnippet
 
-snippet /con(st)?/ "const" r
+snippet /\bc(on(st)?)?/ "const" r
 const ${1} = ${0}
 endsnippet
 
@@ -169,11 +108,20 @@ try {
 }
 endsnippet
 
-snippet /err/ "throw Error" r
-throw new Error('${0}')
+snippet /(}\s*)?fin(ally)?/ "" r
+`!p
+if match.group(0).startswith('}'):
+	snip.rv = '} '
+`finally ${1} {
+	${0}
+}
 endsnippet
 
-snippet ret "return" b
+snippet /err/ "throw Error" r
+throw new Error('${1}')${0}
+endsnippet
+
+snippet r "return" b
 return ${0}
 endsnippet
 
@@ -186,7 +134,7 @@ function(${1}) {
 }
 endsnippet
 
-snippet fun "function" b
+snippet fn "function" b
 function ${1}(${2}) {
 	${0}
 }
@@ -218,43 +166,26 @@ endsnippet
 ##############################
 # class
 ##############################
-snippet cla "class" b
+snippet /\bcla(ss)?/ "class" r
 class ${1} {
 	${0}
 }
 endsnippet
 
-snippet cle "class" b
+snippet cle "" b
 class ${1} extends ${2} {
-	${0}
-}
-endsnippet
-
-snippet clee "class" b
-class ${1} extends ${2} {
-		constructor(${3}) {
-			${3/(.+)/(?1:super\($1\))/}${0}
-		}
+	constructor(${3}) {
+		${3/(.+)?/(?1:super\($1\))/}${0}
 	}
 }
 endsnippet
 
-snippet conr "" b
-constructor(${1}) {
-	${1/(.+)/(?1:super\($1\))/}${0}
+snippet cnt "" b
+constructor(${3}) {
+	${3/(.+)?/(?1:super\($1\))/}${0}
 }
 endsnippet
 
-##############################
-# export
-##############################
-snippet e "export default" b
-export ${0}
-endsnippet
-
-snippet ed "export default" b
-export default ${0:`!p snip.rv = snip.basename`}
-endsnippet
 
 ##############################
 # object
@@ -298,11 +229,11 @@ endsnippet
 ##############################
 # json
 ##############################
-snippet jp "" b
+snippet jp "" w
 JSON.parse(${0})
 endsnippet
 
-snippet js "" b
+snippet js "" w
 JSON.stringify(${0})
 endsnippet
 
@@ -313,19 +244,13 @@ snippet fe "" w
 fetch('${1}')${0}
 endsnippet
 
-snippet thenr "" w
-then(${1:res} => ${2:res.json()})${0}
-endsnippet
-
 snippet then "" w
-then(${1:res} => {
-	${0}
-})
+then(${1} => ${0})
 endsnippet
 
 snippet catch "" w
 catch(${1:err} => {
-	console.error($1)
+	console.error($1)${0}
 })
 endsnippet
 
@@ -349,10 +274,6 @@ snippet clt "" w
 clearTimeout(${1})${0}
 endsnippet
 
-snippet cli "" w
-clearTimeout(${1})${0}
-endsnippet
-
 ##############################
 # dom
 ##############################
@@ -360,27 +281,19 @@ snippet d "" w
 document.
 endsnippet
 
-snippet di "" w
-document.getElementById('${1}')${0}
+snippet get "" w
+getElement${1/(T|C)?.*/(?1:s)/}By${1:I}${1/(^I$)?(^T$)?(^C$)?.*/(?1:d)(?2:agName)(?3:lassName)/}('${2}')${0}
 endsnippet
 
-snippet ge "" w
-getElementById('${1}')${0}
-endsnippet
-
-snippet dc "" w
-document.getElementsByClassName('${1}')${0}
+snippet geti "" w
+getElementById('${2}')${0}
 endsnippet
 
 snippet gc "" w
 getElementsByClassName('${1}')${0}
 endsnippet
 
-snippet dn "" w
-document.getElementsByName('${1}')${0}
-endsnippet
-
-snippet dt "" w
+snippet gt "" w
 document.getElementsByTagName('${1}')${0}
 endsnippet
 
@@ -393,13 +306,11 @@ querySelectorAll('${1}')${0}
 endsnippet
 
 snippet adde "" w
-addEventListener('${1:click}', ${2:(${3:e}) => {
-	${0}
-}})
+addEventListener('${1:click}', ${2})${0}
 endsnippet
 
-snippet rme "" w
-removeEventListener('${1:click}', ${2:handler})${0}
+snippet remo "" w
+removeEventListener('${1:click}', ${2})${0}
 endsnippet
 
 snippet cr "" w
@@ -491,9 +402,24 @@ import ReactDOM from 'react-dom'
 ${0}
 endsnippet
 
+##############################
+# export
+##############################
+snippet e "" b
+export ${0}
+endsnippet
+
+snippet ed "" b
+export default ${0:`!p snip.rv = snip.basename`}
+endsnippet
+
+snippet me "" b
+module.exports = ${0}
+endsnippet
+
 ## component
 snippet rcc "react component" b
-class ${1} extends React.Component {
+class ${1:App} extends React.Component {
 	constructor(props) {
 		super(props)
 	}
@@ -502,6 +428,10 @@ class ${1} extends React.Component {
 		return ${0:<div />}
 	}
 }
+endsnippet
+
+snippet rdr "" b
+ReactDOM.render(${1}, ${2})${0}
 endsnippet
 
 snippet cdm "react componentDidMount" b
@@ -541,13 +471,13 @@ componentWillUpdate(nextProps, nextState)) {
 endsnippet
 
 snippet state "react state" w
-this.state = {
+state = {
 	${0}
 }
 endsnippet
 
-snippet sets "react setState" b
-this.setState({
+snippet sets "react setState" w
+setState({
 	${0}
 })
 endsnippet
