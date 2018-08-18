@@ -55,6 +55,10 @@ snippet /\b\s*:\s*/ "" r
  := ${0}
 endsnippet
 
+snippet /\(/ "" r
+(${1})${0}
+endsnippet
+
 snippet /\[/ "" r
 [${1}]${0}
 endsnippet
@@ -261,13 +265,17 @@ snippet new "" w
 new(${1})${0}
 endsnippet
 
-snippet /\bmake(\d*)/ "" r
+snippet /\bmake(c?)(\d*)/ "" r
 make(`!p
 m = match.group(1)
-if len(m) > 0:
-	snip.rv = '[]'
+if m == 'c':
+	snip.rv = 'chan '
+else:
+	m = match.group(2)
+	if len(m) > 0:
+		snip.rv = '[]'
 `${1}`!p
-m = match.group(1)
+m = match.group(2)
 if len(m) > 0:
 	snip.rv = ', ' + m
 `)${0}
@@ -285,19 +293,25 @@ snippet panic "" w
 panic(${1})${0}
 endsnippet
 
-snippet /\b(\w+)\s*[.=]ap?/ "" r
+snippet /\b([\w\.]+)\s*[.=]ap?/ "" r
 `!p snip.rv = match.group(1)` = append(`!p snip.rv = match.group(1)`, ${1})${0}
 endsnippet
 
 
 # method
 snippet m "method" b
-func (${2:${1/([\W\d_]|(?<!\b)[a-z])?([A-Z])?/(?1:)(?2:\l$2)/g}} ${1}) ${3}(${4}) ${5/([^,])*(,)?.*/(?2:\()/}${5}${5/([^,])*(,)?.*/(?2:\))/}${5/.+/ /}{
+func (${2:${1/([\W\d_]|(?<!\b)[a-z])?([A-Z])?/(?1:)(?2:\l$2)/g}} *${1}) ${3}(${4}) ${5/([^,])*(,)?.*/(?2:\()/}${5}${5/([^,])*(,)?.*/(?2:\))/}${5/.+/ /}{
 	${0:${VISUAL}}
 }
 endsnippet
 
 # test
+snippet tfn "" b
+func Test${1}(t *testing.T) {
+	${0}
+}
+endsnippet
+
 snippet te "" b
 t.Error(${1})${0}
 endsnippet
@@ -331,4 +345,10 @@ snippet sp "" w
 fmt.Sprintf("${2}"${2/([^%]|%%)*(%.)?.*/(?2:, :\))/}$3${2/([^%]|%%)*(%.)?.*/(?2:\))/}
 endsnippet
 
+# http
+snippet han "" w
+func ${1}(w http.ResponseWriter, r *http.Request) {
+	${0}
+}
+endsnippet
 # vim: ft=snippets:
