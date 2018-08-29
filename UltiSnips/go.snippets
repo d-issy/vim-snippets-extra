@@ -3,7 +3,6 @@ priority -5
 # package
 snippet /^pa(ckage)?/ "" r
 package ${1:main}
-
 ${0}
 endsnippet
 
@@ -11,10 +10,8 @@ endsnippet
 # import
 snippet /^im(port)?$/ "" r
 import (
-	${1}
+	${0}
 )
-
-${0}
 endsnippet
 
 
@@ -23,7 +20,7 @@ snippet v "" b
 var ${1} ${0}
 endsnippet
 
-snippet c  "" w
+snippet c  "" b
 const ${1} = ${0}
 endsnippet
 
@@ -114,10 +111,10 @@ uint64
 endsnippet
 
 snippet fl "" w
-float32
+float
 endsnippet
 
-snippet float32 "" w
+snippet float "" w
 float64
 endsnippet
 
@@ -136,7 +133,7 @@ endsnippet
 # condition statement
 snippet if "" b
 if ${1} {
-	${0}
+	${0:${VISUAL}}
 }
 endsnippet
 
@@ -147,7 +144,7 @@ if ${1} {
 }
 endsnippet
 
-snippet /(}\s*)?el(se)?/ "" r
+snippet /(}\s*)?\bel(se)?/ "" r
 `!p
 if match.group(0).startswith('}'):
 	snip.rv = '} '
@@ -156,7 +153,7 @@ if match.group(0).startswith('}'):
 }
 endsnippet
 
-snippet /(}\s*)?elif/ "" r
+snippet /(}\s*)?\belif/ "" r
 `!p
 if match.group(0).startswith('}'):
 	snip.rv = '} '
@@ -306,7 +303,7 @@ func (${2:${1/([\W\d_]|(?<!\b)[a-z])?([A-Z])?/(?1:)(?2:\l$2)/g}} *${1}) ${3}(${4
 endsnippet
 
 # test
-snippet tfn "" b
+snippet test "" b
 func Test${1}(t *testing.T) {
 	${0}
 }
@@ -330,7 +327,7 @@ endsnippet
 
 # fmt
 snippet fp "" b
-fmt.Print(${1})${0}
+fmt.Print(${1:${VISUAL}})${0}
 endsnippet
 
 snippet ff "" b
@@ -338,7 +335,7 @@ fmt.Printf("${1}"${1/([^%]|%%)*(%.)?.*/(?2:, :\))/}$2${1/([^%]|%%)*(%.)?.*/(?2:\
 endsnippet
 
 snippet ln "" b
-fmt.Println(${1}${1/(")?.*/(?1:")/})${0}
+fmt.Println(${1:${VISUAL}})${0}
 endsnippet
 
 snippet sp "" w
