@@ -1,0 +1,129 @@
+# global func
+global !p
+def fix_indent(snip):
+	vim.eval('feedkeys("\<c-f>")')
+endglobal
+
+# require
+snippet req "" w
+require('${1}')${0}
+endsnippet
+
+# variable
+snippet l "" b
+local ${1} = ${0}
+endsnippet
+
+# if
+snippet if "" w
+if ${1} then
+	${0}
+end
+endsnippet
+
+snippet ife "" w
+if ${1} then
+	${0}
+else
+end
+endsnippet
+
+snippet ifen "" w
+if ${1} then ${2} end${0}
+endsnippet
+
+post_expand "fix_indent(snip)"
+snippet elif  "" wt
+elseif ${1} then
+${0}
+endsnippet
+
+# repeat
+snippet rep "" b
+repeat
+	${0}
+until ${1}
+endsnippet
+
+snippet for "" b
+for ${1} do
+	${0}
+end
+endsnippet
+
+snippet forin "" b
+for ${1} in ${2} do
+	${0}
+end
+endsnippet
+
+snippet forp "" b
+for ${1:key}, ${2:value} in pairs(${3}) do
+	${0}
+end
+endsnippet
+
+snippet fori "" b
+for ${1:i}, ${2:value} in ipairs(${3}) do
+	${0}
+end
+endsnippet
+
+snippet while "" b
+while ${1} do
+	${0}
+end
+endsnippet
+
+snippet do "" b
+do
+	${0}
+end
+endsnippet
+
+# function
+snippet fn "" w
+function${1/.+/ /}${1}(${2})
+	${0}
+end
+endsnippet
+
+snippet fnen "" w
+function() ${0} end
+endsnippet
+
+snippet lf "" w
+local function${1/.+/ /}${1}(${2})
+	${0}
+end
+endsnippet
+
+snippet r "" w
+return ${0}
+endsnippet
+
+# abbr
+snippet /(\w+)(\+\+|--)/ "" r
+`!p snip.rv = match.group(1)` = `!p snip.rv = match.group(1)` `!p snip.rv = match.group(2)[0]` 1
+endsnippet
+
+snippet /\(/ "" r
+(${1})${0}
+endsnippet
+
+# function
+snippet p "" w
+print(${1})${0}
+endsnippet
+
+snippet type "" w
+type(${1})${0}
+endsnippet
+
+snippet ts "" w
+tostring(${1})${0}
+endsnippet
+
+snippet tn "" w
+tonumber("${1}")${0}
+endsnippet
