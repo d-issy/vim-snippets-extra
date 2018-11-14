@@ -39,7 +39,7 @@ endsnippet
 
 # type
 snippet /\bt(ype)?/ "" r
-type ${1} ${0}
+type ${1} ${2}
 endsnippet
 
 snippet /\bch(an)?/ "" r
@@ -52,24 +52,16 @@ snippet /\b\s*:\s*/ "" r
  := ${0}
 endsnippet
 
-snippet /\(/ "" r
-(${1})${0}
-endsnippet
-
-snippet /\[/ "" r
-[${1}]${0}
-endsnippet
-
-snippet /\"/ "" r
-"${1}"${0}
+snippet /\[\]/ "" r
+[]${1}{}
 endsnippet
 
 snippet s "" w
-string${0}
+string${1/(\.)?.*/(?1:s)/}${1}
 endsnippet
 
 snippet r "" w
-return ${0}
+return${1/.+/ /}${1}
 endsnippet
 
 snippet df "" b
@@ -119,7 +111,7 @@ float64
 endsnippet
 
 snippet e "" w
-error
+error${1/(\.)?.*/(?1:s)/}${1}
 endsnippet
 
 snippet br "" b
@@ -166,10 +158,6 @@ snippet err "" w
 if err != nil {
 	${0}
 }
-endsnippet
-
-snippet errn "" w
-errors.New("${1}")${0}
 endsnippet
 
 snippet /(\w+)\.ok/ "" r
@@ -232,7 +220,7 @@ endsnippet
 
 # interface
 snippet /\bin(terface)?/ "" r
-interface{}${0}
+interface${1/.+/ /}{${1}}
 endsnippet
 
 # map
@@ -248,6 +236,10 @@ func ${1}(${2}) ${3/([^,])*(,)?.*/(?2:\()/}${3}${3/([^,])*(,)?.*/(?2:\))/}${3/.+
 }
 endsnippet
 
+snippet func "" w
+func(${1})${2/([^\n])?.*/(?1: )/}${2}
+endsnippet
+
 snippet main "" b
 func main() {
 	${0:${VISUAL}}
@@ -255,11 +247,11 @@ func main() {
 endsnippet
 
 snippet /\bl(en)?/ "" r
-len(${1})${0}
+len(${1:${VISUAL}})${0}
 endsnippet
 
 snippet new "" w
-new(${1})${0}
+new(${1:${VISUAL}})${0}
 endsnippet
 
 snippet /\bmake(c?)(\d*)/ "" r
@@ -279,15 +271,15 @@ if len(m) > 0:
 endsnippet
 
 snippet delete "" w
-delete(${1})${0}
+delete(${1:${VISUAL}})${0}
 endsnippet
 
 snippet close "" w
-close(${1})${0}
+close(${1:${VISUAL}})${0}
 endsnippet
 
 snippet panic "" w
-panic(${1})${0}
+panic(${1:${VISUAL}})${0}
 endsnippet
 
 snippet /\b([\w\.]+)\s*[.=]ap?/ "" r
